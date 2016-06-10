@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<project name="junit_Ant" default="compile" basedir=".">
+    <description>
+        Ant Simple Sample File
+    </description>
+  <!-- set global properties for this build -->
+  <property environment="env"/>
+  <property name="ws.home" value="${basedir}"/>
+  <property name="ws.jars" value="${ws.home}/lib"/>
+  <property name="test.dest"  value="${ws.home}/build"/> 
+  <property name="test.src"  value="${ws.home}/src"/> 
+  <property name="test.reportsDir"  value="${ws.home}/reportsdir"/> 
+  <property name="test.classpath"  value="C:\Users\ANKIT THAKUR\workspace\junit_Ant\lib\junit.jar"/> 
+	
+  <path id="junit_Ant.path">
+    
+  	<pathelement location="${test.dest}" />
+  	<fileset dir="${ws.jars}" >
+  		<include name= "**/.jar"/>
+  	</fileset>
+	
+  </path>
+
+	<!-- Init-->
+
+	 <target name="init">
+	    <!-- Create the time stamp -->
+	    <tstamp/>
+	    <!-- Create directories if needed -->
+	 	<mkdir dir="reportsdir"/>
+	  </target>
+	
+	
+	<!-- Clean-->
+	
+  <target name="clean" description="clean up" >
+    <delete dir="${test.dest}"/>
+  	<delete dir="${test.reportsDir}"/>
+  </target>
+
+	<!-- Compile-->
+	
+    <target name="compile" depends="init,clean" description="compile the source " >
+  	<delete includeemptydirs="true" quiet="true">
+  	<fileset dir="${test.dest}" includes ="**/*"/>
+  	</delete>
+
+  	<echo message = "Making directory.."/>
+  	<mkdir dir = "${test.dest}"/>
+  	<echo message = "classpath-----: C:\Users\ANKIT THAKUR\workspace\junit_Ant.classpath"/>
+  	<echo message = "Compiling.."/>
+  	<javac
+  		classpath="${test.classpath}"
+  		debug="true"
+  		destdir="${test.dest}"
+  		srcdir="${test.src}"
+  		target="1.5"
+  		source="1.5"
+  		includeantruntime="false"
+  	>
+  	</javac>
+  	</target>
+
+	
+	<!-- Run-->
+	<target name="run">
+	<delete includeemptydirs="true" quiet="true">
+		<fileset dir = "${test.reportsDir}" includes ="**/*"/>
+	</delete>
+	
+	<mkdir dir="reportsdir"/>
+	<java jar = "${ws.jars}" fork="true" spawn="true" />
+	<junit fork="yes" haltonfailure="no" printsummary="yes">
+		<classpath refid="junit_Ant.path"/>
+		
+		<classpath path="${test.classpath}"/>
+		<batchtest todir="${test.reportsDir}" fork="true">
+	<fileset dir ="${test.dest}">
+
+	<include name="**/*Test*.class"/>
+		
+		
+	</fileset> 
+	</batchtest>
+		<formatter type="xml"/>
+		<classpath refid="junit_Ant.path"/>
+		
+	</junit>
+		<junitreport todir="${test.reportsDir}">
+			<fileset dir="${test.reportsDir}">
+			<include name="TEST-*.xml"/>
+			</fileset>
+			<report todir="${test.reportsDir}"/>
+		</junitreport>
+	</target>
+	
+	</project>
